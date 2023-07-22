@@ -3,7 +3,7 @@
     "path": "C:/Taller R intermedio/SRCROSTI/Clase 3.R",
     "project_path": "Clase 3.R",
     "type": "r_source",
-    "hash": "2590329811",
+    "hash": "12353379",
     "contents": "",
     "dirty": false,
     "created": 1690039360362.0,
@@ -13,15 +13,15 @@
         "tempName": "Untitled1",
         "source_window_id": "",
         "Source": "Source",
-        "cursorPosition": "0,25",
-        "scrollLine": "0"
+        "cursorPosition": "252,0",
+        "scrollLine": "237"
     },
     "folds": "",
-    "lastKnownWriteTime": 1690040631,
+    "lastKnownWriteTime": 1690041533,
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1690040631679,
+    "last_content_update": 1690041533089,
     "read_only": false,
     "read_only_alternatives": []
 }

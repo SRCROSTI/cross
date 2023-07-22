@@ -1,1 +1,252 @@
 ## Realizado por SRCROSTI
+## dplyr %>%  pipeline "sirve para concatenar funciones"
+## Funciones
+## Filter
+## Objeto %>%  filter(atributo<=1)
+## mutate crear nuevas variables
+## objeto %>% muate(atributo_kg=atributo_g/100)
+## Se pueden guardar estas variables
+## objeto 1<- objeto %>% muate(atributo_kg=atributo_g/100)
+
+##group_by agrupar objetos variables categoricas
+## variables estadisticas 
+## objeto %>% group_by(atributo) %>% summarise(atributo_media=mean(atributo))
+install.packages("tidyverse")
+install.packages("gapminder")
+install.packages("viridis")
+install.packages("ggthemes")
+install.packages("datos")
+install.packages("skimr")
+install.packages("janitor")
+
+## Cargar librerias
+library(ggplot2); library(dplyr); library(gapminder); library(viridis); library(ggthemes);
+library(datos);library(skimr);library(janitor); library(palmerpenguins)
+## data set gapminder
+data(gapminder)
+?gapminder  
+skim_without_charts(gapminder)
+
+View(gapminder)
+## Filtrar información del contienen Europeo en el 2007
+europa2007<-gapminder %>% 
+  filter(continent=="Europe" & year==2007)
+View(europa2007)
+mean(europa2007$lifeExp)
+europa1957<-gapminder %>% 
+  filter(continent=="Europe" & year==1957)
+View(europa1957) 
+mean(europa1957$lifeExp)
+mean(europa1957$pop)
+mean(europa2007$pop)
+europa2007 <- gapminder %>%  filter(continent=="Europe" & year==2007)
+
+europa_asia <- gapminder %>% 
+  filter(continent=="Europe" | continent=="Asia")
+summary(europa_asia)
+
+## == filtrar 
+## | es algo parecido a "o"
+
+## Funcion mutate para crear nuevas variables
+gapminder %>% mutate(gdp=gdpPercap*pop)
+
+## Saber el gdp con mas de 800
+gapminder %>% 
+  filter(gdpPercap>800) %>% 
+  mutate(gdp=gdpPercap*pop)
+## debe crear otra columna
+
+summary(gdp800)
+
+## Funcion group_by
+gapminder %>% 
+  filter(continent=="Africa") %>% 
+  group_by(year) %>% 
+  summarise(exp_mean=mean(lifeExp, na.rm = T))
+
+## Agrupar por pais
+
+gapminder %>% 
+  filter(continent=="Africa") %>% 
+  group_by(country) %>% 
+  summarise(exp_mean=mean(lifeExp, na.rm = T))
+
+gapminder %>% 
+  filter(continent=="Africa") %>% 
+  group_by(country) %>% 
+  summarise(exp_mean=mean(lifeExp, na.rm = T)) %>% 
+  arrange(exp_mean)
+## Arrange ordenar datos
+gapminder %>% 
+  filter(continent=="Africa") %>% 
+  group_by(country) %>% 
+  summarise(exp_mean=mean(lifeExp, na.rm = T)) %>% 
+  arrange(desc(exp_mean))
+
+## Agregar la mediana
+gapminder %>% 
+  filter(continent=="Africa") %>% 
+  group_by(country) %>% 
+  summarise(exp_mean=mean(lifeExp, na.rm = T), 
+            exp_median=median(lifeExp, na.rm = T)) %>% 
+  arrange(desc(exp_mean))
+
+## Agregar la desviación estandar
+gapminder %>% 
+  filter(continent=="Africa") %>% 
+  group_by(country) %>% 
+  summarise(exp_mean=mean(lifeExp, na.rm = T), 
+            exp_median=median(lifeExp, na.rm = T), exp_sd=sd(lifeExp, na.rm=T)) %>% 
+  arrange(desc(exp_mean))
+
+## Funcion Arrange
+gapminder %>% 
+  filter(continent=="Africa") %>% 
+  group_by(country) %>% 
+  summarise(exp_mean=mean(lifeExp, na.rm = T), 
+            exp_median=median(lifeExp, na.rm = T)) %>% 
+  arrange(desc(exp_mean)) %>%
+  arrange(desc(exp_mean))
+## Se puede guardar en un objeto 
+exp_africa <-gapminder %>% 
+  filter(continent=="Africa") %>% 
+  group_by(country) %>% 
+  summarise(exp_mean=mean(lifeExp, na.rm = T), 
+            exp_median=median(lifeExp, na.rm = T)) %>% 
+  arrange(desc(exp_mean)) %>%
+  arrange(desc(exp_mean))
+getwd()
+## Para que hay guardado en el directorio
+list.files()
+## Para guardar objeto
+## se pone el nombre del objeto y seguido "<-"
+
+## Para guardar set de datos
+write.csv(exp_africa, "expectativaafrica.csv")
+
+## Para leer una base datos
+read.csv("expectativaafrica.csv")
+## Graficos basico R
+## histograma
+hist(gapminder$pop)
+hist(gapminder$lifeExp)
+hist(gapminder$lifeExp, col="blue", xlab = "Expectativa de vida (años)",
+     ylab = "Frecuencia, main=Histograma de expectativa de vida")
+
+plot(gapminder$gdpPercap, gapminder$lifeExp)
+
+## Graficos en ggplot
+ggplot(gapminder, aes(x=gdpPercap, y=lifeExp))+
+  geom_point()+
+  ylab("Expectativa de vida")+ xlab("gdp per capita")
+
+## Logaritmica
+ggplot(gapminder, aes(x=log(gdpPercap), y=lifeExp))+
+  geom_point()+
+  ylab("Expectativa de vida")+ xlab("gdp per capita")
+
+## Con scale
+
+ggplot(gapminder, aes(x=log(gdpPercap), y=lifeExp))+
+  geom_point()+
+  ylab("Expectativa de vida")+ xlab("gdp per capita")+
+  scale_x_log10()
+
+## Para agregar temas
+## theme_minimal
+
+ggplot(gapminder, aes(x=log(gdpPercap), y=lifeExp))+
+  geom_point()+
+  ylab("Expectativa de vida")+ xlab("gdp per capita")+
+  scale_x_log10()+ theme_classic()+ ggtitle("Relacion entre GDP per capita y expectativa de vida")
+
+## Filtrar por contienente
+gapminder %>% filter(continent=="Americas") %>% 
+  ggplot(aes(x=log(gdpPercap), y=lifeExp))+
+  geom_point()+
+  ylab("Expectativa de vida")+ xlab("gdp per capita")+
+  scale_x_log10()+ theme_classic()+ ggtitle("Relacion entre GDP per capita y expectativa de vida")
+
+## Tamaño de poblacion
+gapminder %>% filter(continent=="Americas") %>% 
+  ggplot(aes(x=log(gdpPercap), y=lifeExp, size=pop))+
+  geom_point()+
+  ylab("Expectativa de vida")+ xlab("gdp per capita")+
+  scale_x_log10()+ theme_classic()+ ggtitle("Relacion entre GDP per capita y expectativa de vida")
+
+## Ver pais por color
+gapminder %>% filter(continent=="Americas") %>% 
+  ggplot(aes(x=log(gdpPercap), y=lifeExp, size=pop, color=country))+
+  geom_point()+
+  ylab("Expectativa de vida")+ xlab("gdp per capita")+
+  scale_x_log10()+ theme_classic()+ ggtitle("Relacion entre GDP per capita y expectativa de vida")
+## Filtrar por año
+gapminder %>% filter(continent=="Americas" & year==2007) %>% 
+  ggplot(aes(x=log(gdpPercap), y=lifeExp, size=pop, color=country))+
+  geom_point()+
+  ylab("Expectativa de vida")+ xlab("gdp per capita")+
+  scale_x_log10()+ theme_classic()+ ggtitle("Relacion entre GDP per capita y expectativa de vida")
+
+gapminder %>% filter(continent=="Americas" & year==1957) %>% 
+  ggplot(aes(x=log(gdpPercap), y=lifeExp, size=pop, color=country))+
+  geom_point()+
+  ylab("Expectativa de vida")+ xlab("gdp per capita")+
+  scale_x_log10()+ theme_classic()+ ggtitle("Relacion entre GDP per capita y expectativa de vida")
+
+# Crecimiento poblacional libreria de virdis
+gapminder %>% filter(continent=="Americas") %>% 
+  ggplot(aes(x=log(gdpPercap), y=lifeExp, size=pop, color=country))+
+  geom_point()+
+  ylab("Expectativa de vida")+ xlab("gdp per capita")+
+  scale_x_log10()+ theme_classic()+ 
+  facet_wrap(~year)+
+  ggtitle("Relacion entre GDP per capita y expectativa de vida")
+## Colores
+gapminder %>% filter(continent=="Americas") %>% 
+  ggplot(aes(x=log(gdpPercap), y=lifeExp, size=pop, color=country))+
+  geom_point()+
+  ylab("Expectativa de vida")+ xlab("gdp per capita")+
+  scale_x_log10()+ theme_classic()+ 
+  facet_wrap(~year)+
+  scale_color_viridis(option="D", discrete=TRUE)+
+  ggtitle("Relacion entre GDP per capita y expectativa de vida")
+
+## Expectativa de vida por continente
+gapminder %>% 
+  filter(year==2007) %>% 
+  ggplot(aes(x=continent, lifeExp, fill=continent))+
+  geom_boxplot()+
+  theme_classic()+
+  ylab("Expectativa de vida")+ xlab("continente")+
+  labs (fills="continente")
+## Expectativa de vida por año en Asia
+gapminder %>% 
+  filter(continent=="Asia") %>%
+  mutate(year1=as, factory(year)) %>% 
+  ggplot(aes(x=year1, lifeExp, fill=continent))+
+  geom_boxplot()+
+  theme_classic()+
+  ylab("Expectativa de vida")+ xlab("continente")+
+  labs (fills="continente")
+
+gapminder %>% 
+  filter(continent=="Asia") %>%
+  ggplot(aes(x=year, lifeExp, fill=continent))+
+  geom_point()+
+  theme_classic()+
+  ylab("Expectativa de vida")+ xlab("continente")+
+  labs (fills="continente")
+
+## Sacar las medias
+gapminder %>% 
+  filter(continent=="Asia") %>% 
+  group_by(year) %>% 
+  summarise(mean_lifeexp=mean(lifeExp, na.rm = T)) %>% 
+  ggplot(aes(x=year, y=mean_lifeexp))+geom_line()+
+  geom_point()+
+  theme_classic()+
+  ylab("Expectativa de vida")+ xlab("año")+
+  ggtitle("Cambios de la expectatita de vida por año")
+
+?ggthemes
